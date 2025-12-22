@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import api from '../services/api';
 import './Login.css';
 
@@ -29,6 +30,8 @@ function Login() {
       localStorage.setItem('fullName', fullName);
       localStorage.setItem('email', email);
 
+      toast.success(`Hoş geldiniz, ${fullName}!`);
+      
       // Dashboard'a yönlendir
       navigate('/dashboard');
     } catch (err) {

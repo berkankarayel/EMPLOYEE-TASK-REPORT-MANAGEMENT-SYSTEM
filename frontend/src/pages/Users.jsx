@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/api';
+import UserModal from '../components/UserModal';
 import './Users.css';
 import './Common.css';
 
@@ -9,6 +11,8 @@ function Users() {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -36,9 +40,51 @@ function Users() {
     try {
       await api.delete(`/User/${id}`);
       setUsers(users.filter(user => user.id !== id));
+      toast.success('Kullanıcı başarıyla silindi!');
     } catch (err) {
-      alert('Silme işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
+      toast.error('Silme işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
       console.error('Error deleting user:', err);
+    }
+  };
+
+  const handleAdd = () => {
+    setEditingUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (user) => {
+    setEditingUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = async (formData) => {
+    try {
+      if (editingUser) {
+        // Update
+        const updateData = { 
+          id: editingUser.id,
+          ...formData 
+        };
+        if (!updateData.password) {
+          delete updateData.password;
+        }
+        await api.put(`/User/${editingUser.id}`, updateData);
+        toast.success('Kullanıcı başarıyla güncellendi!');
+      } else {
+        // Create
+        await api.post('/User', formData);
+        toast.success('Kullanıcı başarıyla oluşturuldu!');
+      }
+      
+      // Başarılı olursa modal'ı kapat
+      await fetchUsers();
+      setIsModalOpen(false);
+      setEditingUser(null);
+    } catch (err) {
+      // Hata olursa modal açık kalsın
+      toast.error('İşlem başarısız: ' + (err.response?.data?.message || err.message || 'Bir hata oluştu'));
+      console.error('Error saving user:', err);
+      throw err; // UserModal'da finally bloğu çalışsın
     }
   };
 
@@ -68,9 +114,16 @@ function Users() {
 
   return (
     <div className="page-container">
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        editUser={editingUser}
+      />
+      
       <div className="page-header">
         <h2>Kullanıcı Yönetimi</h2>
-        <button className="add-btn">+ Kullanıcı Ekle</button>
+        <button className="add-btn" onClick={handleAdd}>+ Kullanıcı Ekle</button>
       </div>
 
       <div className="filters">
@@ -116,7 +169,7 @@ function Users() {
                 </td>
                 <td>
                   <div className="action-buttons">
-                    <button className="edit-btn" title="Düzenle">✏️</button>
+                    <button className="edit-btn" title="Düzenle" onClick={() => handleEdit(user)}>✏️</button>
                     <button className="delete-btn" title="Sil" onClick={() => handleDelete(user.id)}>🗑️</button>
                   </div>
                 </td>

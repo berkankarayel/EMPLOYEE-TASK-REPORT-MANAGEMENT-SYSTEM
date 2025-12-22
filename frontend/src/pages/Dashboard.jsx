@@ -8,6 +8,9 @@ import SystemLogs from './SystemLogs';
 import './Dashboard.css';
 
 function Dashboard() {
+  const role = localStorage.getItem('role');
+  const defaultRoute = role === 'Admin' ? '/dashboard/users' : '/dashboard/tasks';
+
   return (
     <div className="dashboard-layout">
       <Sidebar />
@@ -15,11 +18,11 @@ function Dashboard() {
         <Header />
         <div className="content-area">
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard/users" replace />} />
-            <Route path="/users" element={<Users />} />
+            <Route path="/" element={<Navigate to={defaultRoute} replace />} />
+            {role === 'Admin' && <Route path="/users" element={<Users />} />}
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/leave-requests" element={<LeaveRequests />} />
-            <Route path="/logs" element={<SystemLogs />} />
+            {role === 'Admin' && <Route path="/logs" element={<SystemLogs />} />}
           </Routes>
         </div>
       </div>

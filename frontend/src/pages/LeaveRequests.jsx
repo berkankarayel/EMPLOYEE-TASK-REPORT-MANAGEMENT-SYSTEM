@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/api';
+import LeaveRequestModal from '../components/LeaveRequestModal';
 import './LeaveRequests.css';
 import './Common.css';
 
@@ -8,6 +10,10 @@ function LeaveRequests() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const role = localStorage.getItem('role');
+  const isAdmin = role === 'Admin';
 
   useEffect(() => {
     fetchRequests();
@@ -29,21 +35,36 @@ function LeaveRequests() {
 
   const handleApprove = async (id) => {
     try {
-      await api.put(`/LeaveRequest/${id}`, { status: 'Approved' });
+      await api.patch(`/LeaveRequest/${id}/status`, { id, status: 'Approved' });
       await fetchRequests();
+      toast.success('İzin talebi onaylandı!');
     } catch (err) {
-      alert('Onaylama işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
+      toast.error('Onaylama işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
       console.error('Error approving request:', err);
     }
   };
 
   const handleReject = async (id) => {
     try {
-      await api.put(`/LeaveRequest/${id}`, { status: 'Rejected' });
+      await api.patch(`/LeaveRequest/${id}/status`, { id, status: 'Rejected' });
       await fetchRequests();
+      toast.success('İzin talebi reddedildi.');
     } catch (err) {
-      alert('Reddetme işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
+      toast.error('Reddetme işlemi başarısız: ' + (err.response?.data?.message || 'Bir hata oluştu'));
       console.error('Error rejecting request:', err);
+    }
+  };
+
+  const handleCreateRequest = async (formData) => {
+    try {
+      await api.post('/LeaveRequest', formData);
+      await fetchRequests();
+      setIsModalOpen(false);
+      toast.success('İzin isteği başarıyla oluşturuldu!');
+    } catch (err) {
+      toast.error('İşlem başarısız: ' + (err.response?.data?.message || err.message || 'Bir hata oluştu'));
+      console.error('Error creating leave request:', err);
+      throw err;
     }
   };
 
@@ -77,8 +98,17 @@ function LeaveRequests() {
 
   return (
     <div className="page-container">
+      <LeaveRequestModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateRequest}
+      />
+      
       <div className="page-header">
         <h2>İzin İstekleri</h2>
+        {!isAdmin && (
+          <button className="add-btn" onClick={() => setIsModalOpen(true)}>+ İzin İsteği Oluştur</button>
+        )}
       </div>
 
       <div className="filters">
@@ -118,7 +148,7 @@ function LeaveRequests() {
                 </td>
                 <td>
                   <div className="action-buttons">
-                    {req.status === 'Pending' && (
+                    {isAdmin && req.status === 'Pending' && (
                       <>
                         <button className="approve-btn" title="Onayla" onClick={() => handleApprove(req.id)}>✔️</button>
                         <button className="reject-btn" title="Reddet" onClick={() => handleReject(req.id)}>❌</button>

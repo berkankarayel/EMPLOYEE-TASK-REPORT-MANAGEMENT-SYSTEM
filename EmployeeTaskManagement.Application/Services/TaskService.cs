@@ -27,7 +27,13 @@ public class TaskService : ITaskService
 
     public async Task<IEnumerable<TaskResponseDto>> GetAllTasksAsync()
     {
-        var tasks = await _taskRepository.GetAllAsync();
+        var tasks = await _taskRepository.GetAllWithIncludesAsync(t => t.AssignedUser);
+        return _mapper.Map<IEnumerable<TaskResponseDto>>(tasks);
+    }
+
+    public async Task<IEnumerable<TaskResponseDto>> GetTasksByUserIdAsync(int userId)
+    {
+        var tasks = await _taskRepository.GetTasksByUserIdAsync(userId);
         return _mapper.Map<IEnumerable<TaskResponseDto>>(tasks);
     }
 
@@ -101,12 +107,6 @@ public class TaskService : ITaskService
         await LogAsync("Task Deleted", $"Task deleted: {task.Title}", "Warning");
 
         return true;
-    }
-
-    public async Task<IEnumerable<TaskResponseDto>> GetTasksByUserIdAsync(int userId)
-    {
-        var tasks = await _taskRepository.GetTasksByUserIdAsync(userId);
-        return _mapper.Map<IEnumerable<TaskResponseDto>>(tasks);
     }
 
     public async Task<IEnumerable<TaskResponseDto>> GetTasksByStatusAsync(string status)
