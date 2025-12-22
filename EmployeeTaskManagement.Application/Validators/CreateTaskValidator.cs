@@ -1,0 +1,27 @@
+using EmployeeTaskManagement.Application.DTOs.Task;
+using FluentValidation;
+
+namespace EmployeeTaskManagement.Application.Validators;
+
+public class CreateTaskValidator : AbstractValidator<CreateTaskDto>
+{
+    public CreateTaskValidator()
+    {
+        RuleFor(x => x.Title)
+            .NotEmpty().WithMessage("Görev başlığı zorunludur.")
+            .MinimumLength(3).WithMessage("Görev başlığı en az 3 karakter olmalıdır.")
+            .MaximumLength(200).WithMessage("Görev başlığı en fazla 200 karakter olabilir.");
+
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Görev açıklaması zorunludur.")
+            .MinimumLength(10).WithMessage("Görev açıklaması en az 10 karakter olmalıdır.")
+            .MaximumLength(1000).WithMessage("Görev açıklaması en fazla 1000 karakter olabilir.");
+
+        RuleFor(x => x.DueDate)
+            .NotEmpty().WithMessage("Bitiş tarihi zorunludur.")
+            .GreaterThan(DateTime.UtcNow).WithMessage("Bitiş tarihi gelecek bir tarih olmalıdır.");
+
+        RuleFor(x => x.AssignedUserId)
+            .GreaterThan(0).WithMessage("Geçerli bir kullanıcı seçiniz.");
+    }
+}
