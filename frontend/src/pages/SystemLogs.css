@@ -1,0 +1,28 @@
+.log-description {
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-level {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.log-level.info {
+  background: #ebf8ff;
+  color: #3182ce;
+}
+
+.log-level.warning {
+  background: #fef5e7;
+  color: #d68910;
+}
+
+.log-level.error {
+  background: #fff5f5;
+  color: #c53030;
+}

@@ -1,0 +1,48 @@
+.reason-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leave-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.leave-status.pending {
+  background: #fff5f5;
+  color: #c53030;
+}
+
+.leave-status.approved {
+  background: #f0fff4;
+  color: #38a169;
+}
+
+.leave-status.rejected {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.approve-btn, .reject-btn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+  background: transparent;
+}
+
+.approve-btn:hover {
+  transform: scale(1.1);
+  background: #f0fff4;
+}
+
+.reject-btn:hover {
+  transform: scale(1.1);
+  background: #fff5f5;
+}

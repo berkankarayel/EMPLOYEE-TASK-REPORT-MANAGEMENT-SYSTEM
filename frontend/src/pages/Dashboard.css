@@ -1,0 +1,16 @@
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f7fafc;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+}
+
+.content-area {
+  margin-top: 70px;
+  padding: 2rem;
+  min-height: calc(100vh - 70px);
+}
