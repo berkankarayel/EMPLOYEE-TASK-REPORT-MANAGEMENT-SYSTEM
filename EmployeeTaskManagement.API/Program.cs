@@ -128,6 +128,49 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// Auto Migration ve Admin Seed Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<AppDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Starting database migration...");
+        dbContext.Database.Migrate();
+        logger.LogInformation("Database migration completed.");
+        
+        // Admin kullanıcısı yoksa oluştur
+        if (!dbContext.Users.Any(u => u.Email == "admin@admin.com"))
+        {
+            var adminUser = new EmployeeTaskManagement.Domain.Entities.User
+            {
+                FullName = "System Administrator",
+                Email = "admin@admin.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+                Role = "Admin",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            dbContext.Users.Add(adminUser);
+            dbContext.SaveChanges();
+            logger.LogInformation("✅ Default admin user created: admin@admin.com / admin123");
+        }
+        else
+        {
+            logger.LogInformation("Admin user already exists.");
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "❌ An error occurred while migrating or seeding the database.");
+        throw;
+    }
+}
+
+
 // Middleware pipeline
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
@@ -148,33 +191,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Default Admin User Creation
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    
-    // Database oluştur (yoksa)
-    dbContext.Database.EnsureCreated();
-    
-    // Admin kullanıcı yoksa oluştur
-    if (!dbContext.Users.Any(u => u.Email == "admin@admin.com"))
-    {
-        var adminUser = new EmployeeTaskManagement.Domain.Entities.User
-        {
-            FullName = "System Admin",
-            Email = "admin@admin.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-            Role = "Admin",
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-        
-        dbContext.Users.Add(adminUser);
-        dbContext.SaveChanges();
-        
-        Log.Information("Default admin user created: admin@admin.com / admin123");
-    }
-}
 
 app.Run();
