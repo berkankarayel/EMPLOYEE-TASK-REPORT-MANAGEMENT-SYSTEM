@@ -1,0 +1,23 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            -t employee-frontend:latest \
+            ./frontend
+
+      - name: Verify image
+        run: docker images | grep employee-frontend
