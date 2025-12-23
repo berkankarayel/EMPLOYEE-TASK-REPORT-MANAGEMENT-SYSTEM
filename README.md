@@ -1,10 +1,11 @@
 # 🧩 Employee Task & Report Management System
 
-Kurumsal mimariye uygun olarak geliştirilmiş, şirket içi **görev**, **izin** ve **log** yönetimini
-merkezi ve güvenli bir yapı altında toplayan Full Stack bir uygulama.
+Kurumsal mimari prensipler gözetilerek geliştirilmiş, şirket içi **görev**, **izin**, **raporlama** ve  
+**sistem loglama** süreçlerini merkezi ve güvenli bir yapı altında yöneten **production-ready Full Stack** bir uygulama.
 
-Proje; **.NET 8 Web API**, **React**, **Clean Architecture**, **JWT Authentication**,
-**Docker**, **CI/CD** ve **Azure** odaklı gerçek bir iş senaryosu üzerine kurulmuştur.
+Bu proje basit bir CRUD uygulaması değil, **gerçek bir şirket içi operasyonel sistem** senaryosu üzerine inşa edilmiştir.  
+Geliştirme sürecinde **Clean Architecture**, **güvenli kimlik doğrulama**, **Docker tabanlı containerization** ve  
+**CI/CD pipeline** yaklaşımları esas alınmıştır.
 
 ---
 
@@ -12,85 +13,94 @@ Proje; **.NET 8 Web API**, **React**, **Clean Architecture**, **JWT Authenticati
 
 Şirket içerisinde;
 
-- Kullanıcıların (Admin / Employee) yönetilmesi
-- Görevlerin oluşturulması, atanması ve takip edilmesi
-- İzin taleplerinin yönetilmesi
-- Sistem üzerindeki tüm işlemlerin loglanması
-- Yetkilendirme ve güvenli erişim sağlanması
+- Kullanıcıların (Admin / Employee) güvenli şekilde yönetilmesi  
+- Görevlerin oluşturulması, atanması ve yaşam döngüsünün takip edilmesi  
+- İzin taleplerinin merkezi olarak yönetilmesi  
+- Sistem üzerindeki tüm kritik işlemlerin loglanması  
+- Yetkilendirme, izlenebilirlik ve sürdürülebilirlik sağlanması  
 
-süreçlerini **ölçeklenebilir, sürdürülebilir ve izlenebilir** bir mimari ile yönetmek.
+süreçlerini **ölçeklenebilir**, **bakımı kolay** ve **kurumsal standartlara uygun** bir mimariyle yönetmek.
+
+---
+
+## 🏗️ Mimari Yaklaşım
+
+Proje **Clean Architecture** prensiplerine uygun olarak geliştirilmiştir.
+
+- Katmanlar arası bağımlılıklar tersine çevrilmiştir  
+- İş kuralları altyapıdan tamamen ayrılmıştır  
+- UI, Application ve Infrastructure katmanları izole edilmiştir  
+- Test edilebilir ve genişletilebilir yapı hedeflenmiştir  
+
+**Katmanlar:**
+- Domain  
+- Application  
+- Infrastructure  
+- API  
 
 ---
 
 ## 👥 Roller ve Yetkiler
 
 ### 🔐 Admin
-- Kullanıcı oluşturma, güncelleme ve silme
-- Görev oluşturma ve çalışanlara atama
-- İzin taleplerini onaylama / reddetme
-- Sistem loglarını görüntüleme
+- Kullanıcı oluşturma, güncelleme ve silme  
+- Görev oluşturma ve çalışanlara atama  
+- İzin taleplerini onaylama / reddetme  
+- Sistem loglarını görüntüleme  
 
 ### 👤 Employee
-- Kendisine atanmış görevleri görüntüleme
-- Görev durumlarını güncelleme
-- İzin talebi oluşturma
-
----
-
-- Katmanlar arası bağımlılıklar tersine çevrilmiştir  
-- İş kuralları altyapıdan tamamen ayrılmıştır  
-- Test edilebilir ve genişletilebilir yapı hedeflenmiştir  
+- Kendisine atanmış görevleri görüntüleme  
+- Görev durumlarını güncelleme  
+- İzin talebi oluşturma  
 
 ---
 
 ## ⚙️ Kullanılan Teknolojiler
 
 ### Backend
-- .NET 8 Web API
-- Entity Framework Core
-- Clean Architecture
-- Generic Repository Pattern
-- AutoMapper
-- JWT Authentication & Role-Based Authorization
-- FluentValidation
-- Global Exception Handling
-- Serilog Logging
+- .NET 8 Web API  
+- Entity Framework Core  
+- Clean Architecture  
+- Generic Repository Pattern  
+- AutoMapper  
+- JWT Authentication & Role-Based Authorization  
+- FluentValidation  
+- Global Exception Handling Middleware  
+- Serilog ile merkezi loglama  
 
 ### Frontend
-- React
-- Component-based UI yapısı
+- React  
+- Component-based UI mimarisi  
+- API tabanlı veri yönetimi  
 
 ### DevOps & Deployment
-- Docker
-- Docker Compose
-- CI/CD Pipeline
-- Azure Container Deployment
+- Docker (Multi-Stage Dockerfile)  
+- Docker Compose  
+- Nginx (Frontend Production Build)  
+- GitHub Actions (CI Pipelines)  
+- Cloud-ready yapı (Azure uyumlu)  
 
 ---
 
 ## 🔐 Authentication & Authorization
 
-- Register kapalı, sadece **Login** aktif
-- JWT Token tabanlı kimlik doğrulama
-- Role-based authorization (Admin / Employee)
-- Hassas veriler DTO’lar ile dış dünyadan izole edilmiştir
+- Register endpoint’i kapalıdır  
+- Sadece **Login** üzerinden erişim sağlanır  
+- JWT Token tabanlı kimlik doğrulama  
+- Role-based authorization (Admin / Employee)  
+- Hassas veriler DTO’lar aracılığıyla izole edilmiştir  
 
 ---
 
 ## 🔄 Sistem Akışı
 
 1. Kullanıcı login olur ve JWT Token alır  
-2. Role’a göre yetkilendirme yapılır  
-3. Admin:
-   - Kullanıcı ve görev yönetimi yapar
-   - İzin taleplerini değerlendirir
-4. Employee:
-   - Görevlerini takip eder
-   - İzin talebi oluşturur
+2. Token üzerinden rol bazlı yetkilendirme yapılır  
+3. Admin kullanıcı ve görev yönetimi yapar  
+4. Employee görevlerini takip eder ve izin talebi oluşturur  
 5. Tüm işlemler **SystemLog** tablosuna kaydedilir  
 
 ---
-
 
 ## 🖥️ Uygulama Ekran Görüntüleri
 
@@ -120,16 +130,28 @@ süreçlerini **ölçeklenebilir, sürdürülebilir ve izlenebilir** bir mimari 
 
 ---
 
-## 🚀 Kurulum
+## 🐳 Docker & Containerization
+
+Uygulama tamamen **container-based** olarak çalışacak şekilde yapılandırılmıştır.
+
+- Backend ve Frontend için **multi-stage Dockerfile**
+- Frontend production build’i **Nginx** ile sunulur  
+- MSSQL ayrı bir container olarak çalışır  
+- Veritabanı verileri **Docker volume** ile kalıcıdır  
+- Container’lar arası iletişim **Docker network** üzerinden sağlanır  
+
+**Çalışan Container’lar:**
+- `employee-api` → ASP.NET Core Web API  
+- `employee-frontend` → React + Nginx  
+- `employee-mssql` → SQL Server  
+
+---
+
+## 🚀 Kurulum (Docker)
+
+Projeyi local ortamda çalıştırmak için:
 
 ```bash
 git clone https://github.com/USERNAME/REPO_NAME.git
-docker-compose up --build
-
-
-
-
-
-
-
-
+cd REPO_NAME
+docker compose up -d --build
